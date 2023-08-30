@@ -1,5 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const question = require('./routers/question');
+const auth = require('./routers/auth');
 
 //Environment variables
 dotenv.config({
@@ -8,13 +10,9 @@ dotenv.config({
 const app = express();
 const PORT = process.env.PORT;
 
-app.get("/",(req,res)=>{
-    res.send("Hello question answer api");
-})
-
-app.get("/test",(req,res)=>{
-    res.send("testing");
-})
+//Routers middleware
+app.use("/api/questions",question);
+app.use("/api/auth",auth);
 
 app.listen(PORT,()=>{
     console.log(`App started on ${process.env.PORT} : ${process.env.NODE_ENV}`);
