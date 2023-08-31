@@ -42,7 +42,7 @@ const userSchema = new Schema({
     },
     profile_image:{
         type:String,
-        default:"default_jpg"
+        default:"default.jpg"
     },
     blocked:{
         type:Boolean,
