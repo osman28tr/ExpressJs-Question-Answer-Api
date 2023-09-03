@@ -10,7 +10,8 @@ const register = asyncErrorWrapper(async (req,res,next)=>{
         role
     });
     //console.log(req.body);
-
+    const token = user.generateJwtFromUser();
+    console.log(token);
     res.status(200).json({
         success:true,
         data:user

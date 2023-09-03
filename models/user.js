@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -49,6 +50,19 @@ const userSchema = new Schema({
         default:false
     }
 })
+//user schema methods
+userSchema.methods.generateJwtFromUser = function(){
+    const {JWT_SECRET_KEY,JWT_EXPIRE} = process.env;
+    const payload = {
+        id:this._id,
+        name:this.name,
+    };
+    const token = jwt.sign(payload,JWT_SECRET_KEY,{
+        expiresIn:JWT_EXPIRE
+    });
+    return token;
+};
+//Pre hooks
 userSchema.pre("save", function(next){
     //parola değişmemişse
     if(!this.isModified("password")){
