@@ -1,9 +1,19 @@
+const CustomError = require("../../helpers/error/CustomError");
+
 const customErrorHandler = (err,req,res,next)=>{
     console.log(err);
+    let customError = err;
+    if(err.name==="SyntaxError"){
+        customError = new CustomError("Unexpected Syntax",400);
+    }
+    if(err.name==="ValidationError"){
+        customError = new customError(err.message,400);
+    }
 
-    res.status(400)
+    res.status(customError.status ||500)
     .json({
-        success:false
+        success:false,
+        message:customError.message || "Internal Server Error"
     });
 }
 
