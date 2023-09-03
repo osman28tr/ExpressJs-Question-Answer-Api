@@ -13,6 +13,9 @@ dotenv.config({
 connectDatabase();
 
 const app = express();
+//express - body middleware
+app.use(express.json());
+
 const PORT = process.env.PORT;
 
 //Routers middleware
