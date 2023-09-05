@@ -18,14 +18,17 @@ const register = asyncErrorWrapper(async (req,res,next)=>{
     });  
 });
 
-const tokentest = (req,res,next)=>{
+const getUser = (req,res,next)=>{
     res.json({
         success:true,
-        message:"welcome"
+        message:{
+            id:req.user.id,
+            name:req.user.name
+        }
     });
 };
 
 module.exports = {
     register,
-    tokentest
+    getUser
 };
