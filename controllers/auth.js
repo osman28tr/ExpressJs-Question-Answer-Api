@@ -3,6 +3,7 @@ const CustomError = require('../helpers/error/CustomError');
 const asyncErrorWrapper = require("express-async-handler");
 const {sendJwtToClient} = require('../helpers/authorization/tokenHelpers');
 const {validateUserInput,comparePassword} = require('../helpers/input/inputHelpers');
+const sendEmail = require('../helpers/libraries/sendEmail');
 
 const register = asyncErrorWrapper(async (req,res,next)=>{
     const {name,mail,password,role} = req.body;
@@ -77,10 +78,32 @@ const forgotPassword = asyncErrorWrapper(async (req,res,next)=>{
     }
     const resetPasswordToken = user.getResetPasswordTokenFromUser();
     await user.save();
-    res.json({
-        success:true,
-        message:"Token sent your email"
-    });
+
+    const resetPasswordUrl = `http://localhost:5000/api/auth/resetpassword?resetPasswordToken=${resetPasswordToken}`;
+    const emailTemplate = `
+    <h3>Reset your password</h3>
+    <p>This <a href = '${resetPasswordUrl}' target = '_blank'>link </a> will expire in 1 hour</p>`;
+
+    try{
+        await sendEmail({
+            from:process.env.SMTP_USER,
+            to : resetEmail,
+            subject:"Reset your password",
+            html:emailTemplate
+        });
+        return res.status(200).json({
+            success:true,
+            message:"Token sent to your email"
+        });
+    }
+    catch(err){
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save();
+
+        return next(new CustomError("Email could not be send",500));
+    }
+    
 })
 
 module.exports = {

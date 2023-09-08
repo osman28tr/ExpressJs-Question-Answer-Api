@@ -4,6 +4,7 @@ const sendEmail = async(mailOptions)=>{
     let transporter = nodeMailer.createTransport({
         host:process.env.SMTP_HOST,
         port:process.env.SMTP_PORT,
+        service:"gmail",
         auth:{
             user:process.env.SMTP_USER,
             pass:process.env.SMTP_PASS
