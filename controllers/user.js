@@ -6,10 +6,6 @@ const getSingleUser = asyncErrorWrapper(async (req,res,next)=>{
     const {id} = req.params;
     const user = await User.findById(id);
 
-    if(!user){
-        return next(new CustomError("There is no user with that mail",400));
-    }
-
     return res.status(200)
     .json({
         status:true,
