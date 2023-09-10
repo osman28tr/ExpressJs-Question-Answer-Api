@@ -120,6 +120,8 @@ const resetPassword = asyncErrorWrapper(async (req,res,next)=>{
     });
     if(!user){
         return next(new CustomError("Invalid token or session expired",400));
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
     }
 
     user.password = password;
