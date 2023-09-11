@@ -17,6 +17,18 @@ const blockUser = asyncErrorWrapper(async (req,res,next)=>{
         message:"Block - Unblock successfull"
     });
 })
+const deleteUser = asyncErrorWrapper(async (req,res,next)=>{
+    const {id} = req.params;
+
+    await User.findByIdAndDelete(id)
+
+    return res.status(200)
+    .json({
+        success:true,
+        message:"Delete operation sucessful"
+    })
+})
 module.exports = {
-    blockUser
+    blockUser,
+    deleteUser
 };
