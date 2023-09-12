@@ -9,6 +9,16 @@ const getAllQuestions = asyncErrorWrapper(async (req,res,next) =>{
         data:questions
     });
 });
+const getSingleQuestion = asyncErrorWrapper(async (req,res,next) =>{
+    const {id} = req.params;
+
+    const question = await Question.findById(id);
+
+    res.status(200).json({
+        success:true,
+        data:question
+    });
+});
 const askNewQuestion = asyncErrorWrapper(async (req,res,next)=>{
     const information = req.body;
     console.log(req.user);
@@ -24,5 +34,6 @@ const askNewQuestion = asyncErrorWrapper(async (req,res,next)=>{
 })
 module.exports = {
     getAllQuestions,
-    askNewQuestion
+    askNewQuestion,
+    getSingleQuestion
 };
