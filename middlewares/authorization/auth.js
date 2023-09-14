@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../../models/user');
 const {isTokenIncluded,getAccessTokenFromHeader} = require('../../helpers/authorization/tokenHelpers');
 const asyncErrorWrapper = require('express-async-handler');
+const Question = require('../../models/question');
 
 const getAccessToRoute = (req,res,next)=>{
     const {JWT_SECRET_KEY} = process.env;
@@ -36,7 +37,19 @@ const getAdminAccess= asyncErrorWrapper(async(req,res,next)=>{
     }
     next();
 });
+const getQuestionOwnerAccess= asyncErrorWrapper(async(req,res,next)=>{
+    const userId = req.user.id;
+    const questionId = req.params.id;
+
+    const question = await Question.findById(questionId);
+
+    if(question.user!= userId){
+        return next(new CustomError("Only owner can access handle this operation",403));
+    }
+    next();
+});
 module.exports = {
     getAccessToRoute,
-    getAdminAccess
+    getAdminAccess,
+    getQuestionOwnerAccess
 };
