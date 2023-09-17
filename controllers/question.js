@@ -79,11 +79,30 @@ const likeQuestion = asyncErrorWrapper(async (req,res,next) =>{
         data:question
     });
 });
+const undolikeQuestion = asyncErrorWrapper(async (req,res,next) =>{
+    const {id} = req.params;
+
+    const question = await Question.findById(id);
+
+    if(question.likes.includes(req.user.id)){
+        question.likes.pop(req.user.id);
+
+        await question.save();
+
+        return res.status(200)
+        .json({
+            success:true,
+            data:question
+        })
+    }
+    return next(new CustomError("You already not liked",400));
+});
 module.exports = {
     getAllQuestions,
     askNewQuestion,
     getSingleQuestion,
     editQuestion,
     deleteQuestion,
-    likeQuestion
+    likeQuestion,
+    undolikeQuestion
 };
