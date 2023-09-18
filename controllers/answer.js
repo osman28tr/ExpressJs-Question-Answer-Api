@@ -22,7 +22,22 @@ const addNewAnswerToQuestion = asyncErrorWrapper(async (req,res,next) =>{
     });
     
 });
+const getAnswerToQuestion = asyncErrorWrapper(async (req,res,next) =>{
+    const questionId = req.params.question_id;
+    
+    const question = await Question.findById(questionId).populate("answers");
+
+    const answers = question.answers;
+
+    return res.status(200)
+    .json({
+        success:true,
+        count:answers.length,
+        data:answers
+    });
+});
 
 module.exports = {
-    addNewAnswerToQuestion
+    addNewAnswerToQuestion,
+    getAnswerToQuestion
 }
