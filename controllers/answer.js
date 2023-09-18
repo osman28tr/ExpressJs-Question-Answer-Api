@@ -53,8 +53,30 @@ const getSingleAnswer = asyncErrorWrapper(async (req,res,next) =>{
         data:answer
     });
 });
+const editAnswer = asyncErrorWrapper(async (req,res,next) =>{
+    const {answer_id} = req.params;
+    const id = req.user.id;
+
+    const {content} = req.body;
+
+    let answer = await Answer.findById(answer_id);
+
+    if(answer.user == id){
+        answer.content = content;
+    
+        answer = await answer.save();
+    
+        return res.status(200)
+        .json({
+            success:true,
+            data:answer
+        });
+    }
+    return next(new CustomError("You have not edit permission this answer",400));
+});
 module.exports = {
     addNewAnswerToQuestion,
     getAnswerToQuestion,
-    getSingleAnswer
+    getSingleAnswer,
+    editAnswer
 }
