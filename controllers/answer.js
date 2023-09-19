@@ -55,28 +55,43 @@ const getSingleAnswer = asyncErrorWrapper(async (req,res,next) =>{
 });
 const editAnswer = asyncErrorWrapper(async (req,res,next) =>{
     const {answer_id} = req.params;
-    const id = req.user.id;
 
     const {content} = req.body;
 
     let answer = await Answer.findById(answer_id);
+    answer.content = content;
 
-    if(answer.user == id){
-        answer.content = content;
-    
-        answer = await answer.save();
-    
-        return res.status(200)
-        .json({
-            success:true,
-            data:answer
-        });
-    }
-    return next(new CustomError("You have not edit permission this answer",400));
+    answer = await answer.save();
+
+    return res.status(200)
+    .json({
+        success:true,
+        data:answer
+    });
+});
+const deleteAnswer = asyncErrorWrapper(async (req,res,next) =>{
+    const {answer_id} = req.params;
+
+    const {question_id} = req.params;
+
+    await Answer.findByIdAndRemove(answer_id);
+
+    const question = await Question.findById(question_id);
+
+    question.answers.splice(question.answers.indexOf(question_id),1);
+
+    await question.save();
+
+    return res.status(200)
+    .json({
+        success:true,
+        message:"Answer deleted successfully."
+    });
 });
 module.exports = {
     addNewAnswerToQuestion,
     getAnswerToQuestion,
     getSingleAnswer,
-    editAnswer
+    editAnswer,
+    deleteAnswer
 }
