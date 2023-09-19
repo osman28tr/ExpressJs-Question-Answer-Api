@@ -88,10 +88,48 @@ const deleteAnswer = asyncErrorWrapper(async (req,res,next) =>{
         message:"Answer deleted successfully."
     });
 });
+const likeAnswer = asyncErrorWrapper(async (req,res,next) =>{
+    const {answer_id} = req.params;
+
+    const answer = await Answer.findById(answer_id);
+
+    if(answer.likes.includes(req.user.id)){
+        return next(new CustomError("You already liked this answer",400));
+    }
+    answer.likes.push(req.user.id);
+
+    await answer.save();
+
+    return res.status(200)
+    .json({
+        success:true,
+        data:answer
+    });
+});
+const undoLikeAnswer = asyncErrorWrapper(async (req,res,next) =>{
+    const {answer_id} = req.params;
+
+    const answer = await Answer.findById(answer_id);
+
+    if(answer.likes.includes(req.user.id)){
+        answer.likes.pop(req.user.id);
+
+        await answer.save();
+
+        return res.status(200)
+        .json({
+            success:true,
+            data:answer
+        })
+    }
+    return next(new CustomError("You already not liked",400));
+});
 module.exports = {
     addNewAnswerToQuestion,
     getAnswerToQuestion,
     getSingleAnswer,
     editAnswer,
-    deleteAnswer
+    deleteAnswer,
+    likeAnswer,
+    undoLikeAnswer
 }
