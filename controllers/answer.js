@@ -79,7 +79,7 @@ const deleteAnswer = asyncErrorWrapper(async (req,res,next) =>{
     const question = await Question.findById(question_id);
 
     question.answers.splice(question.answers.indexOf(question_id),1);
-
+    question.answerCount = question.answerCount - 1;
     await question.save();
 
     return res.status(200)

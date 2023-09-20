@@ -113,7 +113,7 @@ const likeQuestion = asyncErrorWrapper(async (req,res,next) =>{
         return next(new CustomError("You already liked this question",400));
     }
     question.likes.push(req.user.id);
-
+    question.likeCount = question.likeCount + 1;
     await question.save();
 
     return res.status(200)
@@ -129,7 +129,7 @@ const undolikeQuestion = asyncErrorWrapper(async (req,res,next) =>{
 
     if(question.likes.includes(req.user.id)){
         question.likes.pop(req.user.id);
-
+        question.likeCount = question.likeCount - 1;
         await question.save();
 
         return res.status(200)
