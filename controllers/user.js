@@ -13,12 +13,8 @@ const getSingleUser = asyncErrorWrapper(async (req,res,next)=>{
     });
 });
 const getAllUsers = asyncErrorWrapper(async (req,res,next)=>{
-    const users = await User.find();
     return res.status(200)
-    .json({
-        status:true,
-        data:users
-    });
+    .json(res.queryResults);
 });
 module.exports = {
     getSingleUser,
